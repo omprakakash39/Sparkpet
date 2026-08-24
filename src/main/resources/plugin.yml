@@ -1,0 +1,25 @@
+name: SparkPets
+version: '${project.version}'
+main: com.sayan.sparkpets.SparkPets
+api-version: '1.21'
+authors: [sayan]
+description: Custom Pets System with Fusion & Eggs
+softdepend: [PlaceholderAPI]
+
+commands:
+  pets:
+    description: Open the Pets GUI
+    aliases: [pet, sparkpets]
+    permission: sparkpets.use
+    permission-message: §cYou don't have permission to use this command.
+
+permissions:
+  sparkpets.use:
+    description: Allows using /pets command
+    default: true
+  sparkpets.admin:
+    description: Allows taking pets/eggs from GUIs
+    default: op
+  sparkpets.give:
+    description: Allows giving pet eggs
+    default: op
