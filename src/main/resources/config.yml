@@ -1,0 +1,15 @@
+# SparkPets Configuration
+# Author: sayan
+
+settings:
+  max-primary: 1
+  max-secondary: 1
+  egg-open-sound: ENTITY_PLAYER_LEVELUP
+  activate-sound: BLOCK_BEACON_ACTIVATE
+
+messages:
+  prefix: "§8[§bSparkPets§8] §r"
+  no-permission: "§cYou don't have permission."
+  pet-activated: "§aPet activated!"
+  pet-deactivated: "§aPet deactivated!"
+  already-active: "§cYou already have a pet of this type active!"
