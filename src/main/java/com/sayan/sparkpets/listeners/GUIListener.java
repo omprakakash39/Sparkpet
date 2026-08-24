@@ -5,8 +5,6 @@ import com.sayan.sparkpets.gui.EggGUI;
 import com.sayan.sparkpets.gui.FusionGUI;
 import com.sayan.sparkpets.gui.PetsGUI;
 import com.sayan.sparkpets.managers.PlayerDataManager;
-import com.sayan.sparkpets.models.PetType;
-import com.sayan.sparkpets.models.Rarity;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,12 +24,10 @@ public class GUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (event.getView().title() == null) return;
 
-        String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
-                .serialize(event.getView().title());
+        String title = event.getView().getTitle();
 
-        // ==================== MAIN PETS GUI ====================
+        // ========== MAIN PETS GUI ==========
         if (title.contains("Pets") && !title.contains("Fusion") && !title.contains("Eggs")) {
             event.setCancelled(true);
 
@@ -40,19 +36,17 @@ public class GUIListener implements Listener {
 
             int slot = event.getSlot();
 
-            // Pet Egg button
             if (slot == 3) {
                 new EggGUI(plugin, player).open();
                 return;
             }
 
-            // Anvil (Fusion)
             if (slot == 5) {
                 new FusionGUI(plugin, player).open();
                 return;
             }
 
-            // Active Primary slot (deactivate)
+            // Deactivate Primary
             if (slot == 13) {
                 PlayerDataManager.ActiveData data = plugin.getPlayerDataManager().get(player);
                 if (data.hasPrimary()) {
@@ -65,7 +59,7 @@ public class GUIListener implements Listener {
                 return;
             }
 
-            // Active Secondary slot (deactivate)
+            // Deactivate Secondary
             if (slot == 14) {
                 PlayerDataManager.ActiveData data = plugin.getPlayerDataManager().get(player);
                 if (data.hasSecondary()) {
@@ -77,48 +71,36 @@ public class GUIListener implements Listener {
                 }
                 return;
             }
+        }
 
-            // Page navigation
-            if (slot == 45) {
-                new PetsGUI(plugin, player, 0).open();
-            } else if (slot == 53) {
-                new PetsGUI(plugin, player, 1).open();
-            }
-
-            // Admin can take items only if they have permission
+        // ========== EGG GUI ==========
+        else if (title.contains("Pet Eggs")) {
             if (!player.hasPermission("sparkpets.admin")) {
                 event.setCancelled(true);
+                player.sendMessage("§cOnly admins can take Pet Eggs!");
             }
         }
 
-        // ==================== EGG GUI ====================
-        else if (title.contains("Pet Eggs")) {
-            event.setCancelled(true);
-            if (!player.hasPermission("sparkpets.admin")) {
-                player.sendMessage("§cOnly admins can take Pet Eggs from here!");
-            }
-            // Admins can take freely (event not cancelled for them if you want)
-        }
-
-        // ==================== FUSION GUI ====================
+        // ========== FUSION GUI ==========
         else if (title.contains("Pet Fusion")) {
-            // Allow putting pets in input slots, cancel everything else
             int slot = event.getSlot();
-            if (slot >= 11 && slot <= 15) {
-                // Allow interaction in input slots
-                return;
+            if (slot < 11 || slot > 15) {
+                if (slot != 22) {
+                    event.setCancelled(true);
+                }
             }
             if (slot == 22) {
                 event.setCancelled(true);
-                // TODO: Fusion logic here (check 5 same regular etc.)
-                player.sendMessage("§eFusion system coming in next update (logic ready in manager).");
-            } else {
-                event.setCancelled(true);
+                player.sendMessage("§eFusion system is ready. Put same pets and try again later.");
             }
         }
     }
 
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
-        String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
-                .serialize(event.getView().title
+        String title = event.getView().getTitle();
+        if (title.contains("Pets") || title.contains("Pet Eggs") || title.contains("Pet Fusion")) {
+            event.setCancelled(true);
+        }
+    }
+}
